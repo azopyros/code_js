@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>Devoir de JavaScript</title>
+		<script src="biblio.js"></script>
+		<script>
+			var livres = [];
+
+			Events.addEvent(window,"load",function(event){
+				ajax._({
+					'url' : 'http://localhost/test_js/exo1/livres.xml',
+					'complete' : function(data){
+						_id('divMessageAttente').deleteNode();
+						var livresXML = data.responseXML.getElementsByTagName('livre');
+						for(var i = 0; i < livresXML.length; i++){
+							var livre = {};
+							livre.titre = livresXML[i].getElementsByTagName('titre')[0].innerHTML;
+							livre.auteur = livresXML[i].getElementsByTagName('auteur')[0].innerHTML;
+							livre.genre = livresXML[i].getElementsByTagName('genre')[0].innerHTML;
+							livre.editeur = livresXML[i].getElementsByTagName('editeur')[0].innerHTML;
+							livre.disponible = livresXML[i].getElementsByTagName('disponible')[0].innerHTML;
+							livres.push(livre);
+						}
+
+						afficherLivres(true);
+					}
+				});
+				
+				Events.addEvent(_id("dispo"),"click",function(){
+					afficherLivres(true);
+				});
+
+				Events.addEvent(_id("ndispo"),"click",function(){
+					afficherLivres(false);
+				});
+			});
+
+			var afficherLivres = function(dispo){
+				var rows = _tn("tr");
+				console.log(rows);
+				for(var j = 1; j < rows.length;){
+					rows[j].deleteNode();
+				}
+				for(var i = 0; i < livres.length; i++){
+					if(livres[i].disponible === 'oui' && dispo || livres[i].disponible === 'non' && !dispo){
+						var ligne = _cn("tr",{},{});
+						var titre = _ct(livres[i].titre,_cn("td",{},{},ligne));
+						var auteur = _ct(livres[i].auteur,_cn("td",{},{},ligne));
+						var genre = _ct(livres[i].genre,_cn("td",{},{},ligne));
+						var editeur = _ct(livres[i].editeur,_cn("td",{},{},ligne));
+						var disponible = _ct(livres[i].disponible,_cn("td",{},{},ligne));
+						_id("livres").append(ligne);
+					}
+				}
+			}
+		</script>
+		<style>
+			td{
+				padding : 0px 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<p id="divMessageAttente">Veuillez patientez ...</p>
+		<table id="livres" style="text-align : center;">
+			<tr><td>Titre</td><td>Auteur</td><td>Genre</td><td>Editeur</td><td>Disponibilité</td></tr>
+		</table>
+		<div id="boutonsRecherche">
+			<label for="dispo">Livres disponibles</label><input type="radio" name="dispo" id="dispo">
+			<label for="ndispo">Livres non-disponibles</label><input type="radio" name="dispo" id="ndispo">
+		</div>
+	</body>
+</html>

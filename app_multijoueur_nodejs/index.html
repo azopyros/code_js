@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>A simple game</title>
+
+		<!-- Notice the URL, this is handled by socket.io on the server automatically, via express -->
+		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+		<script type="text/javascript" src="/public/balle.class.js"></script>
+
+		<script type="text/javascript" src="/public/miw.js"></script>
+		
+		<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+		<!-- This will create a connection to socket.io, and print the user serverid that we sent from the server side. --> 
+		<script type="text/javascript">
+			$("document").ready(function(){
+				//This is all that needs
+				var socket = io.connect('http://139.124.142.110:8080');
+				//_log("connexion à socket enclenchée;");
+
+				/* Création des variables globales */
+				var balle = null; // notre balle
+				var balles = {}; // toutes les balles
+				var zone = "zone"; // la zone où sont affichées les balles
+
+				//Quand on reçoit une connection
+				socket.on('onconnected', function( data ) {
+
+					// on creer notre balle
+					//_log("Nous recevons notre id : " + data.id);
+					balle = new Balle(data.id, prompt("color (#rgb)"), 0, 0, zone);
+
+					//on l'ajoute au tableau
+					balles[data.id] = balle;
+
+					//on l'envoie au serveur
+					socket.emit('maBalle', balle);
+
+					//on l'affiche
+					balle.affiche();
+
+					// on va recevoir toutes les balles pour les ajouter à notre tableau et les afficher.
+			  		//_log("Nous recevons les balles :");
+			  		//_log(data.balles);
+
+			  		var ballesTmp = data.balles;
+			  		for(var indice in ballesTmp){
+			  			var balleTmp = ballesTmp[indice];
+			  			// ajout au tableau
+			  			balles[balleTmp.id] = new Balle(balleTmp.id, balleTmp.color, balleTmp.x, balleTmp.y, zone);
+			  			//affichage
+			  			balles[balleTmp.id].affiche();
+			  			//_log("affichage de la balle identifié par :" + balleTmp.id);
+			  		}
+			  	});
+
+				//Quand un client se deconnecte
+			  	socket.on('disconnection', function(data){
+			  		// on reçoit son ID
+			  		//_log("un client vient de se deconnecter");
+			  		//on le supprime de notre tableau
+			  		delete balles[data.id];
+
+			  		//on le supprime de la zone d'affichage
+			  		document.getElementById("balle" + data.id).deleteNode();
+			  	});
+
+			  	//Quand une balle autre bouge
+			  	socket.on('update', function(data){
+			  		// on reçoit les données de la balle
+			  		//_log("un client bouge !");
+			  		balles[data.id].updateFromBalle(data);
+			  	})
+
+			  	//Quand un nouveau joueur
+			  	socket.on('nouveauJoueur',function(data){
+			  		//_log("un nouveau joueur est là !");
+			  		//on reçoit une balle
+			  		//_log(data);
+
+			  		//on la cree
+			  		var balleTmp = new Balle(data.id, data.color, data.x, data.y, zone);
+
+			  		//on l'ajoute au tableau
+			  		balles[data.id] = balleTmp;
+
+			  		//on l'affiche
+			  		balleTmp.affiche();
+			  	})
+
+			  	//Quand l'utilisateur appuie sur une touche
+			  	document.getElementsByTagName("body")[0].addEventListener("keydown",function(event){
+					switch(event.keyCode){
+						case 37: balle.moveLeft(); break;
+						case 38: balle.moveUp(); break;
+						case 39: balle.moveRight(); break;
+						case 40: balle.moveDown(); break;
+					}
+					balle.update();
+					//on s'envoie au serveur
+					socket.emit('move', balle);
+				});
+		 	 });
+		</script>
+		<style>
+			#zone{
+				position : relative;
+				overflow : hidden;
+				width : 300px;
+				height : 300px;
+				border : 1px solid black;
+			}
+
+			.balle{
+				position: absolute;
+				width: 20px;
+				height: 20px;
+				border-radius: 90%;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Welcome !</h1>
+		<div id="zone">
+
+		</div>
+	</body>
+</html>

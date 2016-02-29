@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>labyrinthe</title>
+		<script src="./javascript/miw.js"></script>
+		<script src="./javascript/joueur.js"></script>
+		<script src="./javascript/case.js"></script>
+		<script src="./javascript/plateau.js"></script>
+		<script>
+		// Only executed our code once the DOM is ready.
+			var plateau = false;
+			var canvas = false;
+			var taille = 30;
+			window.onload = function() {
+				canvas = document.getElementById("canvas");
+				//.attrib({width:32*taille+"px", height:32*taille+"px"});
+				canvas["width"] = (32*taille);
+				canvas["height"] = (32*taille);
+				plateau = new Plateau(taille,canvas.getContext("2d"));
+				plateau.affiche(document.getElementById("zone_jeu"));
+
+				var touches = [];
+
+				//Quand l'utilisateur appuie sur une touche
+			  	document.getElementsByTagName("body")[0].addEventListener("keypress",function(event){
+			  		touches.push(event.keyCode);
+				});
+
+			  	//Quand il desapuie
+				document.getElementsByTagName("body")[0].addEventListener("keyup", function(event){
+					//touches.splice(touches.indexOf(event.keyCode),1);
+				});
+
+				//Toutes les x secondes
+				var boucle = setInterval(function(){
+					switch(touches.shift()){
+						case 37: plateau.moveJoueur(plateau.joueur,"l"); break;
+						case 38: plateau.moveJoueur(plateau.joueur,"t"); break;
+						case 39: plateau.moveJoueur(plateau.joueur,"r"); break;
+						case 40: plateau.moveJoueur(plateau.joueur,"b"); break;
+					}
+				},10);
+			}
+		</script>
+		<link rel="stylesheet" type="text/css" href="./styles/jeu.css">
+	</head>
+	<body>
+		<div id="zone_jeu">		
+		<canvas id="canvas" resize>I9-</canvas>	
+			
+		</div>
+	</body>
+</html>

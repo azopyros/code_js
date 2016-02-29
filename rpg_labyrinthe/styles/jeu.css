@@ -1,0 +1,36 @@
+*{
+	 box-sizing : border-box;
+}
+
+#zone_jeu{
+	position : relative;
+	background-color: #eee;
+	/*border : 1px solid black;*/
+}
+
+div[id*="case"]{
+	position : absolute;
+	width : 32px;
+	height : 32px;
+}
+
+.case[class*="t"]{border-top : 1px solid black;}
+.case[class*="r"]{border-right : 1px solid black;}
+.case[class*="b"]{border-bottom : 1px solid black;}
+.case[class*="l"]{border-left : 1px solid black;}
+
+div[id*="joueur"]{
+	position : absolute;
+	width : 22px;
+	height : 22px;
+	margin-top : 5px;
+	margin-left: 5px;
+	border : 1px solid blue;
+	background-color: red;
+	transition : all 0.1s ease-out;
+}
+
+canvas{
+	/*border : 1px solid black;
+	margin-top: 15px;*/
+}

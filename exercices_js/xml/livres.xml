@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<livres>
+	<livre id="1">
+		<titre>Oliver Twist (T1)</titre>
+		<auteur>DICKENS Charles</auteur>
+		<genre>Roman</genre>
+		<editeur>Flammarion</editeur>
+		<disponible>oui</disponible>
+	</livre>
+	<livre id="2">
+		<titre>Oliver Twist (T2)</titre>
+		<auteur>DICKENS Charles</auteur>
+		<genre>Roman</genre>
+		<editeur>Flammarion</editeur>
+		<disponible>non</disponible>
+	</livre>
+	<livre id="3">
+		<titre>Oliver Twist (T3)</titre>
+		<auteur>DICKENS Charles</auteur>
+		<genre>Roman</genre>
+		<editeur>Flammarion</editeur>
+		<disponible>oui</disponible>
+	</livre>
+	<livre id="4">
+		<titre>Oliver Twist (T4)</titre>
+		<auteur>DICKENS Charles</auteur>
+		<genre>Roman</genre>
+		<editeur>Flammarion</editeur>
+		<disponible>non</disponible>
+	</livre>
+	<livre id="5">
+		<titre>Oliver Twist (T5)</titre>
+		<auteur>DICKENS Charles</auteur>
+		<genre>Roman</genre>
+		<editeur>Flammarion</editeur>
+		<disponible>oui</disponible>
+	</livre>
+	<livre id="6">
+		<titre>Oliver Twist (T6)</titre>
+		<auteur>DICKENS Charles</auteur>
+		<genre>Roman</genre>
+		<editeur>Flammarion</editeur>
+		<disponible>oui</disponible>
+	</livre>
+	<livre id="7">
+		<titre>Oliver Twist (T7)</titre>
+		<auteur>DICKENS Charles</auteur>
+		<genre>Roman</genre>
+		<editeur>Inconnu</editeur>
+		<disponible>non</disponible>
+	</livre>
+</livres>

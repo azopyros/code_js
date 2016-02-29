@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang='fr'>
+	<head>
+		<meta charset="UTF-8">
+		<title>météo</title>
+		<script src="miw.js"></script>
+		<script src="request.js"></script>
+		<script type="text/javascript">
+			window.addEventListener("load",function(evt){
+				_id("validation").addEventListener("click", function(evt){
+					sendRequest(_id("ville").value);
+				});
+
+				_id("validation").addEventListener("keypress", function(evt){
+					if(_id("ville").value.length>2){
+						askVille(_id("ville").value.trim());
+					}
+				});
+			});
+
+			sendRequest = function(ville){
+				var aaa = Request({
+					url : "http://api.openweathermap.org/data/2.5/weather",
+					handleAs : "json",
+					parameters : {'q' : ville+",fr", 'appid' : "5e31e37a0a003937d08f8f4a8e74d721"},
+					onSuccess : function(res){
+						console.log(res);
+					}
+				});
+			}
+
+			askVille = function(letters){
+				var aaa = Request({
+					url : "traitement.php",
+					handleAs : "json",
+					parameters : {'letters' : letters},
+					onSuccess : function(res){
+						//TODO
+					}
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<input id="ville" name="ville" type="text">
+		<button id="validation">Valider</button>
+		<p id="resultat">
+
+		</p>
+	</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>Devoir de JavaScript 2</title>
+		<script src="biblio.js"></script>
+		<script>
+			Events.addEvent(window,"load",function(event){
+				Events.addEvent(_id('inputDepartement'),"keyup",function(event){
+					if(_id('inputDepartement').value.length >= 2){
+						ajax._({
+							'url' : 'http://localhost/test_js/exo2/getVillesFromDepartement.php',
+							'data' : 'cp='+_id('inputDepartement').value,
+							'complete' : function(data){
+								if(data.responseText.length > 2){
+									var villes = JSON.parse(data.responseText);
+									_id("resultatRecherche").empty();
+									for(var i = 0; i<villes.length; i++){
+										createVille(villes[i].CP,villes[i].Ville);
+									}								
+								}
+								else{
+									_id("resultatRecherche").innerHTML = "ERROR !";
+								}
+							}
+						});
+					}
+					else{
+						_id("resultatRecherche").empty();
+					}
+				});	
+
+				Events.addEvent(_id('boutonAjoutVille'),"click",function(event){
+					createVille("","");
+				});			
+			});
+
+			var createVille = function(cp,ville){
+				//Ajout d'une ville au tableau des villes affichés
+
+				//Si le tableau n'existe pas
+				if(!_id('tableVilles')){
+					//On le cree
+					_cn("table",{id:"tableVilles"},{},_id("resultatRecherche"));
+				}
+
+				//Creation de la ligne
+				var ligne = _cn("tr",{},{});
+
+				//Si aucun code postal ne nous a été donné
+				if(cp === ""){
+					//on cree un ligne remplie et modifiable
+					var tdCp = _cn("td",{},{},ligne); //premiere case
+					var tdVille = _cn("td",{},{},ligne); //deuxième case
+					var boutonAjout = _cn("button",{},{},_cn("td",{},{},ligne)); //troisième case
+
+					_cn("input",{type:"text"},{},tdCp); // texte premiere case
+					_cn("input",{type:"text"},{},tdVille); // texte deuxieme case
+					_ct("+",boutonAjout); // texte troisème case
+
+					Events.addEvent(boutonAjout,'click',function(event){ // evenment du click
+						addVille(this);
+					});
+				}
+				else{
+					//on cree un ligne remplie et modifiable
+					var tdCp = _cn("td",{},{},ligne); //premiere case
+					var tdVille = _cn("td",{},{},ligne); //deuxième case
+					var boutonSuppr = _cn("button",{},{},_cn("td",{},{},ligne)); //troisième case
+
+					_ct(cp,tdCp); // texte premiere case
+					_ct(ville,tdVille); // texte deuxieme case
+					_ct("X",boutonSuppr); // texte troisème case
+
+					Events.addEvent(tdCp,'click',modifValeurCP);
+					Events.addEvent(tdVille,'click',modifValeurVille);
+					Events.addEvent(boutonSuppr,'click',function(event){
+						supprVille(this);
+					});
+
+				}
+				//ajout de la ligne au tableau
+				_id('tableVilles').append(ligne);
+			}
+
+			var supprVille = function(bouton){
+				var tr = bouton.parentElement.parentElement;
+				var cp = tr.getElementsByTagName("td")[0].innerHTML;
+				tr.deleteNode();
+				ajax._({
+					'url' : 'http://localhost/test_js/exo2/removeVille.php',
+					'data' : 'cp='+cp,
+					'complete' : function(data){}
+				});
+			}
+
+			var addVille = function(bouton){
+				var tr = bouton.parentElement.parentElement;
+				var cp = tr.getElementsByTagName("input")[0].value;
+				var ville = tr.getElementsByTagName("input")[1].value;
+				tr.deleteNode();
+				ajax._({
+					'url' : 'http://localhost/test_js/exo2/addVille.php',
+					'data' : 'cp='+cp+"&ville="+ville,
+					'complete' : function(data){}
+				});
+			}
+
+			var updateVille = function(tr,modifByCP){
+				var cp = tr.getElementsByTagName("td")[0].innerHTML;
+				var ville = tr.getElementsByTagName("td")[1].innerHTML;
+				ajax._({
+					'url' : 'http://localhost/test_js/exo2/updateVille.php',
+					'data' : 'cp='+cp+"&ville="+ville+"&modifByCP="+modifByCP,
+					'complete' : function(data){}
+				});
+			}
+
+			var modifValeurCP = function(){
+				var td = this;
+				td.innerHTML = window.prompt("Nouvelle valeur",td.innerHTML);
+				updateVille(td.parentElement,true);
+			}
+
+			var modifValeurVille = function(){
+				var td = this;
+				td.innerHTML = window.prompt("Nouvelle valeur",td.innerHTML);
+				updateVille(td.parentElement,false);
+			}
+		</script>
+		<style>
+			td{
+				padding : 5px;
+				border : 1px solid black;
+			}
+		</style>
+	</head>
+	<body>
+		<label for="inputDepartement">Département</label><input type="text" id="inputDepartement" name="inputDepartement">
+		<p></p>
+		<label for="boutonAjoutVille">Ville</label><button id="boutonAjoutVille" type="button">+</button>
+		<p></p>
+		<div id="resultatRecherche">
+
+		</div>
+	</body>
+</html>
